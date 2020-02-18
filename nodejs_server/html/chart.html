@@ -1,0 +1,93 @@
+<head>
+	<script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/Chart.min.js"></script>
+	<script src="/js/icon5.js"></script>    
+	
+    <script src="/js/icon4.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/chart.css">
+</head>
+<!-- Main Content -->
+<main class="main-content">
+
+	<!-- Masthead -->
+	<div class="masthead">
+
+		<div class="logo">
+			<h1> IoT Gateway</h1><i class="fas fa-ellipsis-h logo-icon" aria-hidden="true"></i></h1>
+		</div>
+
+		<div class="vault-search">
+			<form>
+				<input type="search" class="search-input" placeholder="search my vault" aria-label="search vault">
+				<i class="fas fa-search search-icon" aria-hidden="true"></i>
+			</form>
+		</div>
+
+		<div class="user-settings" tabindex="0" aria-label="User Settings">
+			<div class="user-image">
+				<i class="fas fa-user-circle" aria-hidden="true"></i>
+			</div>
+			<ul class="user-info">
+				<li class="user-email" id="user">email@example.com</li>
+				<li class="user-type" id="email">Premium User</li>
+			</ul>
+		</div>
+
+	</div>
+	<!-- End of masthead -->
+
+	<!-- Vault items controls-->
+	<div class="vault-items-controls">
+        <h2>All items</h2>
+        <input type="date" id="date" onchange="getDate()"> 
+	</div>
+    <div  id="items_container">
+		<div class="chart-container">  
+			<canvas id="tem"></canvas> 
+		</div>
+
+		<div class="chart-container">  
+				<canvas id="hum"></canvas>
+		</div>
+		<div class="chart-container">
+				<canvas id="rain"></canvas>
+		</div>
+		<button class="add-vault-item-btn btn" aria-label="Add Item" title="Add Item"><span aria-hidden="true">+</span></button>
+
+	</div>
+
+</main>
+<!-- End of main content -->
+
+<!-- Sidebar -->
+<nav class="sidebar">
+
+	<button class="collapse-btn menu-btn btn" aria-label="Expand Menu" title="Expand Menu">
+            <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </button>
+
+	<div class="vault-controls-menu">
+
+		<div class="vault-menu-group">
+			<button class="menu-btn btn current" aria-label="All Items" title="All Items" onclick="move_home()">
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                </button>
+		</div>
+
+		<button class="menu-btn btn" aria-label="Sharing Center" title="Sharing Center" onclick="logout()">
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+            </button>
+
+		<button class="menu-btn btn" aria-label="Emergency Access" title="Emergency Access">
+            <i class="iconify" data-icon="fa-regular:chart-bar" aria-hidden="true"></i>
+        </button>
+
+		<button class="menu-btn btn" aria-label="More Options" title="More Options" >
+                <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+            </button>
+
+	</div>
+    <script src="/js/chart.js"></script>
+</nav>
+<!-- End of sidebar -->
