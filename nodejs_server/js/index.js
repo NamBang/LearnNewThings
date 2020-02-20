@@ -5,27 +5,37 @@ socket.on('connect', () => {
     mess.username = getCookie('username');
     socket.emit('type', mess);
     // display_account_info(message.account, message.email);
-    socket.on('sensor_data', function (message) {
-        if(message.temperature.value && message.temperature.value != " NAN") {
-            add_implement('temperature-low',message.temperature.value + "°C", message.temperature.id);
-            console.log("add temp");
-        }else remove_implement('temperature'+message.temperature.id);
-        if(message.humidity.value && message.humidity.value != " NAN") {
-            add_implement('tint',message.humidity.value + " %", message.humidity.id);
-            console.log("add temp");
-        }else remove_implement('tint' + message.humidity.id);
-        if (message.gas.value && message.gas.value != -1) {
-            add_implement('fire', message.gas.value, message.gas.id);
-            console.log("add temp");
-        } else remove_implement('fire' + message.gas.id);
-        if(message.pressure.value && message.pressure.value != -1) {
-            add_implement('tachometer-alt',message.pressure.value + "Pa", message.pressure.id);
-            console.log("add temp");
-        }else remove_implement('tachometer-alt' + message.pressure.id);
-        if(message.rain.value && message.rain.value != -1) {
-            add_implement('cloud-sun-rain',message.rain.value, message.rain.id);
-            console.log("add temp");
-        }else remove_implement('cloud-sun-rain' + message.rain.id);
+    socket.on('sensor_data', function (mess) {
+        console.log(mess);
+        for(i=0; i<4; i++){
+          if(mess.value[i]){
+            var message = mess.value[i];
+            console.log(message);
+            if(message.temperature && message.temperature != " NAN" && message.temperature != "0" && message.temperature != 'nan') {
+                add_implement('temperature-low',message.temperature + "°C", message.id);
+            }else remove_implement('temperature-low'+message.id);
+            if(message.humidity && message.humidity != " NAN" && message.humidity !="0" && message.humidity != "nan"){
+                add_implement('tint',message.humidity + " %", message.id);
+            }else remove_implement('tint' + message.id);
+            if (message.gas && message.gas != -1) {
+                add_implement('fire', message.gas, message.id);
+            } else remove_implement('fire' + message.id);
+            if(message.pressure && message.pressure != -1) {
+                add_implement('tachometer-alt',message.pressure + "Pa", message.id);
+            }else remove_implement('tachometer-alt' + message.id);
+            if(message.rain && message.rain != -1) {
+  	        if(message.rain=1)
+                add_implement('cloud-sun-rain',"Khong mua", message.id);
+                else add_implement('cloud-sun-rain',"Co mua", message.id);
+            }else remove_implement('cloud-sun-rain' + message.id);
+          }else {
+            remove_implement('temperature' + String(95+i));
+            remove_implement('tint' + String(95+i));
+            remove_implement('fire' + String(95+i));
+            remove_implement('tachometer-alt' + String(95+i));
+            remove_implement('cloud-sun-rain' + String(95+i));
+          }
+        } 
     })
     socket.on("data_user", function (mess) {
         document.getElementById("user").innerHTML = mess.username;
@@ -61,6 +71,11 @@ function logout() {
     window.location.href = window.location.protocol + '//' + window.location.host;
 }
 
+// function addId(){
+//     var idGateway = document.getElementById("idgateway");
+//     console.log(idGateway);
+
+// }
 function move_chart() {
     window.location.href = window.location.protocol + '//' + window.location.host + "/html/chart.html";
 }

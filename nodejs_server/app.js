@@ -1,4 +1,4 @@
-const PORT = 8080;
+const PORT = 8000;
 var assert = require('assert');
 var express = require('express');
 var cookieParser = require('cookie-parser');
@@ -12,13 +12,15 @@ var io = socketio(server);
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/linux-gateway";
 var nodemailer = require('nodemailer');
-let data = { "id": 96, "t": 30, "h": 75, "g": 1, "p": 1000, "r": 1 };
+let data = { "id": -1, "t": " NAN", "h": " NAN", "g": -1, "p": -1, "r": -1 };
 let mail_flag = 1;
-
+let myObj = {};
+myObj.value=[];
+myObj.value[1]={};
 const option = {
   service: 'gmail',
-  port: 25,
-  ecure: false,
+  port: 465,
+  secure: false,
   auth: {
     user: 'gateway.iot2020@gmail.com', // email hoặc username
     pass: 'singuyen1' // password
@@ -47,10 +49,10 @@ var mail = {
 //Tiến hành gửi email
 
 
-MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
+MongoClient.connect(url, function (err, db) {
   if (err) throw err;
   console.log("Database created!");
-  push_mess();
+  // push_mess();
   db.close();
 });
 
@@ -96,9 +98,83 @@ function enable_mail() {
   mail_flag = 1;
 }
 
+function isJson(str){
+  try {
+   JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true
+}
+
+function isDate(x){
+  try {
+   x.getMonth();
+  } catch (e) {
+    return false;
+  }
+  return true
+}
+
+
 mqtt_client.on('message', function (topic, message) {
   console.log(message.toString())
+  if(isJson(message)){
   data = JSON.parse(message);
+  }
+  if (data != null) {
+  switch (data.id) {
+    case 95:
+      myObj.value[0] = {};
+      myObj.value[0].id = "LoRa";
+      myObj.value[0].temperature = data.t;
+      myObj.value[0].humidity = data.h;
+      myObj.value[0].pressure = data.p;
+      myObj.value[0].gas = data.g;
+      myObj.value[0].rain = data.r;
+      var msg_to_node = {
+        'NodeId': 12,
+        'Fan': 13,
+        'Humidity': 13,
+        'Light': 13,
+        'Light_Hex': 23,
+        'Pump': 28
+    };
+    mqtt_client.publish('addID', JSON.stringify(msg_to_node));      
+      break;
+    case 96:
+      myObj.value[1].id = "RF";
+      if(data.t)
+        myObj.value[1].temperature = data.t;
+      if(data.h)
+        myObj.value[1].humidity = data.h;
+      if(data.p)
+        myObj.value[1].pressure = data.p;
+      if(data.g)
+        myObj.value[1].gas = data.g;
+      if(data.r)
+        myObj.value[1].rain = data.r;
+      break;
+    case 97:
+      myObj.value[2] = {};
+      myObj.value[2].id = "Bluetooth";
+      myObj.value[2].temperature = data.t;
+      myObj.value[2].humidity = data.h;
+      myObj.value[2].pressure = data.p;
+      myObj.value[2].gas = data.g;
+      myObj.value[2].rain = data.r;
+      break;
+    case 94:
+      myObj.value[3] = {};
+      myObj.value[3].id = "Wifi";
+      myObj.value[3].temperature = data.t;
+      myObj.value[3].humidity = data.h;
+      myObj.value[3].pressure = data.p;
+      myObj.value[3].gas = data.g;
+      myObj.value[3].rain = data.r;
+    }
+  }
+    myObj.date = new Date();
   if (data.g > 900 && mail_flag) {
     transporter.sendMail(mail, function (error, info) {
       if (error) { // nếu có lỗi
@@ -114,66 +190,41 @@ mqtt_client.on('message', function (topic, message) {
 
 
 function push_mess() {
-  if (data != null) {
-    var myObj = {};
-    if (data.t != " NAN") {
-      myObj.temperature = {};
-      myObj.temperature.id = data.id;
-      myObj.temperature.value = data.t;
-    }
-    if (data.h != " NAN") {
-      myObj.humidity = {};
-      myObj.humidity.id = data.id;
-      myObj.humidity.value = data.h;
-    }
-    if (data.g != -1) {
-      myObj.gas = {};
-      myObj.gas.id = data.id;
-      myObj.gas.value = data.g;
-    }
-    if (data.p != -1) {
-      myObj.pressure = {};
-      myObj.pressure.id = data.id;
-      myObj.pressure.value = data.p;
-    }
-    if (data.r != -1) {
-      myObj.rain = {};
-      myObj.rain.id = data.id;
-      myObj.rain.value = data.r;
-    }
-    myObj.date = new Date();
-    //myObj.date.setHours(myObj.date.getHours()+24); 
     allWebClients.forEach(function (socket) {
       socket.emit("sensor_data", myObj);
     })
-    MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
-      assert.equal(null, err);
-      var db = client.db('linux-gateway');
-      db.collection("myCollection").insertOne(myObj, function (err, res) {
-        if (err) throw err;
-        console.log(myObj);
-      });
-      client.close();
+}
+
+function insert_data() {
+  MongoClient.connect(url, function (err, client) {
+    assert.equal(null, err);
+    var db = client.db('linux-gateway');
+    db.collection("myCollection").insertOne(myObj, function (err, res) {
+      if (err) throw err;
+      console.log(myObj);
+      myObj={};
+      myObj.value=[];
+      myObj.value[1]={};
     });
-  }
+    client.close();
+  });
 }
 
 function collect_data() {
-  MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+  MongoClient.connect(url, function (err, client) {
     assert.equal(null, err);
     var db = client.db('linux-gateway');
     db.collection("chartCollection").insertOne(myObj, function (err, res) {
       if (err) throw err;
       console.log("1 document inserted");
-      db.close();
     });
     client.close();
   });
 }
 
 setInterval(function () { collect_data(); }, 3600000);
-//setInterval(function () { push_mess(); }, 5000);
-
+setInterval(function () { push_mess(); }, 3000);
+setInterval(function () { insert_data();}, 60000)
 io.on('connection', function (socket) {	//'connection' (1) nay khac gi voi 'connection' (2)
   console.log("Connected"); //In ra windowm console la da co mot Socket mqtt_client ket noi thanh cong.
   allWebClients.push(socket);
@@ -182,7 +233,7 @@ io.on('connection', function (socket) {	//'connection' (1) nay khac gi voi 'conn
       case 'login':
         console.log("sideptrai");
         socket.on('seasion-info', function (message) {
-          MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+          MongoClient.connect(url, function (err, client) {
             assert.equal(null, err);
 
             var querryObj = { 'username': message.username };
@@ -209,7 +260,7 @@ io.on('connection', function (socket) {	//'connection' (1) nay khac gi voi 'conn
           });
         });
         socket.on('signup-info', function (message) {
-          MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+          MongoClient.connect(url, function (err, client) {
             assert.equal(null, err);
             var db = client.db('linux-gateway');
             db.collection("user").insert({
@@ -222,7 +273,7 @@ io.on('connection', function (socket) {	//'connection' (1) nay khac gi voi 'conn
         });
         break;
       case 'index':
-        MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+        MongoClient.connect(url, function (err, client) {
           assert.equal(null, err);
           var querryObj = { 'username': msg.username };
           var db = client.db('linux-gateway');
@@ -239,23 +290,66 @@ io.on('connection', function (socket) {	//'connection' (1) nay khac gi voi 'conn
         });
         break;
       case 'chart':
+        MongoClient.connect(url, function (err, client) {
+          assert.equal(null, err);
+          var querryObj = { 'username': msg.username };
+          var db = client.db('linux-gateway');
+          db.collection("user").findOne(querryObj, function (err, result) {
+            assert.equal(null, err);
+            var dataObject = {};
+            if (result) {
+              dataObject.username = msg.username;
+              dataObject.email = result.email;
+              socket.emit('data_user', dataObject);
+            }
+            client.close();
+          });
+        });
+
         socket.on("rq_chart", function (mess) {
-          MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+          MongoClient.connect(url, function (err, client) {
             assert.equal(null, err);
             var db = client.db('linux-gateway');
             db.collection("chartCollection").find({}).toArray(function (err, result) {
               if (err) throw err;
-              let data_chart = {};
-              data_chart.temperature = [];
-              data_chart.humidity = [];
-              data_chart.rain = [];
+              let data_chart = [];
+	      data_chart[0] = {};
+	      data_chart[1] = {};
+ 	      data_chart[2] = {};
+              data_chart[0].temperature = [];
+              data_chart[0].humidity = [];
+              data_chart[0].rain = [];
+              data_chart[1].temperature = [];
+              data_chart[1].humidity = [];
+              data_chart[1].rain = [];
+              data_chart[2].temperature = [];
+              data_chart[2].humidity = [];
+              data_chart[2].rain = [];
+              console.log(result)   
               result.forEach(function(obj) {
-                if(obj.date.getFullYear() == mess.y && ("0" + (obj.date.getMonth() + 1)).slice(-2) == mess.m) {
-                  data_chart.rain[obj.date.getDate() - 1] = obj.rain.value;
+               if(isDate(obj.date)) { 
+                if(("0" + (obj.date.getMonth() + 1)).slice(-2) == mess.m) {
+                  if(obj.value[0])
+		    data_chart[0].rain[obj.date.getDate() - 1] = obj.value[0].rain;
+                  if(obj.value[1])
+                    data_chart[1].rain[obj.date.getDate() - 1] = obj.value[1].rain;
+                  if(obj.value[2])
+                    data_chart[2].rain[obj.date.getDate() - 1] = obj.value[2].rain;
                   if(obj.date.getDate() == mess.d) {
-                    data_chart.temperature[obj.date.getHours()] = obj.temperature.value;
-                    data_chart.humidity[obj.date.getHours()] = obj.humidity.value;
+                    if(obj.value[0])
+                      data_chart[0].temperature[obj.date.getHours() - 1] = obj.value[0].temperature;
+                    if(obj.value[1])
+                      data_chart[1].temperature[obj.date.getHours() - 1] = obj.value[1].temperature;
+                    if(obj.value[2])
+                      data_chart[2].temperature[obj.date.getHours() - 1] = obj.value[2].temperature;
+                    if(obj.value[0])
+                      data_chart[0].humidity[obj.date.getHours() - 1] = obj.value[0].humidity;
+                    if(obj.value[1])
+                      data_chart[1].humidity[obj.date.getHours() - 1] = obj.value[1].humidity;
+                    if(obj.value[2])
+                      data_chart[2].humidity[obj.date.getHours() - 1] = obj.value[2].humidity;
                   }
+                }
                 }
               })
               console.log(data_chart);
@@ -276,7 +370,7 @@ io.on('connection', function (socket) {	//'connection' (1) nay khac gi voi 'conn
 
 function checkLoginAccount(username, password, callback) {
   var resultObject = {};
-  MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+  MongoClient.connect(url, function (err, client) {
     assert.equal(null, err);
 
     var querryObj = { 'username': username };

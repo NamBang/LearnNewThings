@@ -44,15 +44,38 @@
 	</div>
     <div  id="items_container">
 		<div class="chart-container">  
-			<canvas id="tem"></canvas> 
+			<canvas id="tem-lora"></canvas> 
 		</div>
-
 		<div class="chart-container">  
-				<canvas id="hum"></canvas>
+			<canvas id="hum-lora"></canvas>
 		</div>
 		<div class="chart-container">
-				<canvas id="rain"></canvas>
+			<canvas id="rain-lora"></canvas>
 		</div>
+                
+		<div class="chart-container">
+                        <canvas id="tem-rf"></canvas>
+                </div>
+
+                <div class="chart-container">
+                        <canvas id="hum-rf"></canvas>
+                </div>
+                <div class="chart-container">
+                        <canvas id="rain-rf"></canvas>
+                </div>
+
+  		<div class="chart-container">
+                        <canvas id="tem-bluetooth"></canvas>
+                </div>
+
+                <div class="chart-container">
+                        <canvas id="hum-bluetooth"></canvas>
+                </div>
+                <div class="chart-container">
+                        <canvas id="rain-bluetooth"></canvas>
+                </div>
+
+ 
 		<button class="add-vault-item-btn btn" aria-label="Add Item" title="Add Item"><span aria-hidden="true">+</span></button>
 
 	</div>
@@ -75,13 +98,13 @@
                 </button>
 		</div>
 
-		<button class="menu-btn btn" aria-label="Sharing Center" title="Sharing Center" onclick="logout()">
-                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
-            </button>
 
 		<button class="menu-btn btn" aria-label="Emergency Access" title="Emergency Access">
             <i class="iconify" data-icon="fa-regular:chart-bar" aria-hidden="true"></i>
         </button>
+	        <button class="menu-btn btn" aria-label="Sharing Center" title="Sharing Center" onclick="logout()">
+                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+            </button>
 
 		<button class="menu-btn btn" aria-label="More Options" title="More Options" >
                 <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
