@@ -40,6 +40,12 @@
 	<div class="vault-items-controls">
 
 		<h2>All items</h2>
+		<form class="new" method="post" action="/jobs">
+			<div id="dynamicInput"></div>
+			<input type="text" placeholder="idGW" id="idGW" name="idGW" />
+			<input type="button" value="AddidGateway" onclick="addInput('dynamicInput');" />
+			<!-- <input type="button" value="Save" /> -->
+		</form>
 
 		<!--<button class="vault-items-controls-btn btn" aria-label="Collapse Items" title="Collapse Items">
                 <i class="fas fa-caret-up" aria-hidden="true"></i>

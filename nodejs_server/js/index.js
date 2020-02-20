@@ -71,11 +71,10 @@ function logout() {
     window.location.href = window.location.protocol + '//' + window.location.host;
 }
 
-// function addId(){
-//     var idGateway = document.getElementById("idgateway");
-//     console.log(idGateway);
+function addId(){
+    window.location.href = window.location.protocol + '//' + window.location.host + "/html/idGateway.html";
 
-// }
+}
 function move_chart() {
     window.location.href = window.location.protocol + '//' + window.location.host + "/html/chart.html";
 }

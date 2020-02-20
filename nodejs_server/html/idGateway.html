@@ -1,10 +1,10 @@
 <head>
 	<script src="/socket.io/socket.io.js"></script>
-    <script src="/js/jquery.js"></script>
-    <script src="/js/Chart.min.js"></script>
-	<script src="/js/icon5.js"></script>    
-	
-    <script src="/js/icon4.js"></script>
+	<script src="/js/jquery.js"></script>
+	<script src="/js/Chart.min.js"></script>
+	<script src="/js/icon5.js"></script>
+
+	<script src="/js/icon4.js"></script>
 	<link rel="stylesheet" type="text/css" href="/css/chart.css">
 </head>
 <!-- Main Content -->
@@ -39,10 +39,11 @@
 
 	<!-- Vault items controls-->
 	<div class="vault-items-controls">
-        <h2>All Gateway</h2>
-        <input type="text" id="idGateway" onchange="getIdGateway()"> 
+		<h2>All Gateway</h2>
+		<input type="text" id="idGateway" onchange="getIdGateway()">
 	</div>
-    <!-- <div  id="items_container">
+	
+	<!-- <div  id="items_container">
 		<div class="chart-container">  
 			<canvas id="tem-lora"></canvas> 
 		</div>
@@ -87,30 +88,35 @@
 <nav class="sidebar">
 
 	<button class="collapse-btn menu-btn btn" aria-label="Expand Menu" title="Expand Menu">
-            <i class="fas fa-arrow-right" aria-hidden="true"></i>
-        </button>
+		<i class="fas fa-arrow-right" aria-hidden="true"></i>
+	</button>
 
 	<div class="vault-controls-menu">
 
 		<div class="vault-menu-group">
 			<button class="menu-btn btn current" aria-label="All Items" title="All Items" onclick="move_home()">
-                    <i class="fas fa-home" aria-hidden="true"></i>
-                </button>
+				<i class="fas fa-home" aria-hidden="true"></i>
+			</button>
 		</div>
 
 
 		<button class="menu-btn btn" aria-label="Emergency Access" title="Emergency Access">
-            <i class="iconify" data-icon="fa-regular:chart-bar" aria-hidden="true"></i>
-        </button>
-	        <button class="menu-btn btn" aria-label="Sharing Center" title="Sharing Center" onclick="logout()">
-                <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
-            </button>
+			<i class="iconify" data-icon="fa-regular:chart-bar" aria-hidden="true"></i>
+		</button>
 
-		<button class="menu-btn btn" aria-label="More Options" title="More Options" >
-                <i class="fas fa-ellipsis-h" aria-hidden="true"></i>
-            </button>
+		<button class="menu-btn btn" aria-label="Sharing Center" title="Sharing Center" onclick="logout()">
+			<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+		</button>
+
+		<button class="menu-btn btn" aria-label="Add idGateway" title="Add idGateway" onclick="addId()">
+			<i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+		</button>
+
+		<button class="menu-btn btn" aria-label="More Options" title="More Options">
+			<i class="fas fa-ellipsis-h" aria-hidden="true"></i>
+		</button>
 
 	</div>
-    <script src="/js/chart.js"></script>
+	<script src="/js/chart.js"></script>
 </nav>
 <!-- End of sidebar -->
